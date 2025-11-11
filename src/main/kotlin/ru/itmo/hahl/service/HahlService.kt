@@ -8,7 +8,7 @@ class HahlService(
     private val repository: HahlRepository
 ) {
 
-    fun store() {
-
+    fun store(data: String): String {
+        return repository.store(data)
     }
 }

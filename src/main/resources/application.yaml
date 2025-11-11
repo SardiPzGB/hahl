@@ -6,3 +6,17 @@ spring:
     username: postgres
     password: gfhjkm
     driver-class-name: org.postgresql.Driver
+
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        timing.measures: true
+      sla:
+        http.server.requests: 1ms,5ms,10ms
+        timing.measures: 1ms,5ms,10ms
+  endpoints:
+    web:
+      exposure:
+        include: "*"

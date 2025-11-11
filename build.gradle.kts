@@ -3,6 +3,8 @@ plugins {
 	kotlin("plugin.spring") version "1.9.22"
 	id("org.springframework.boot") version "3.5.7"
 	id("io.spring.dependency-management") version "1.1.7"
+	id ("maven-publish")
+	application
 }
 
 group = "ru.itmo"
@@ -26,6 +28,7 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -37,4 +40,8 @@ kotlin {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+application {
+	mainClass.set("ru.itmo.hahl.HahlApplicationKt")
 }
