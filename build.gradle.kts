@@ -12,7 +12,6 @@ description = "HAHL project on Spring Boot"
 
 repositories {
 	mavenCentral()
-//	maven { url = uri("https://repo.spring.io/snapshot") }
 }
 
 dependencies {
