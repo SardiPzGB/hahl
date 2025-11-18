@@ -11,11 +11,11 @@ management:
   metrics:
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
         timing.measures: true
       sla:
-        http.server.requests: 1ms,5ms,10ms
-        timing.measures: 1ms,5ms,10ms
+        http.server.requests: 1ms,5ms,10ms,50ms,100ms
+        timing.measures: 1ms,5ms,10ms,50ms,100ms
   endpoints:
     web:
       exposure:
