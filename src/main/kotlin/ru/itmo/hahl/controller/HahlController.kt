@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import ru.itmo.hahl.service.HahlService
+import java.time.Duration
 import kotlin.random.Random
 
 @Controller
@@ -18,7 +19,7 @@ class HahlController(
 ) {
 
     @Timed("hello_world")
-    @GetMapping("/")
+    @GetMapping("/hello")
     fun helloWorld(): ResponseEntity<String> {
         println("---- hello")
         return ResponseEntity(
@@ -31,12 +32,24 @@ class HahlController(
     @GetMapping("/laggy")
     fun helloWorldLaggy(): ResponseEntity<String> {
         val status = if (Random.nextInt(0, 100) > 94) {
-            HttpStatusCode.valueOf(200)
+            HttpStatusCode.valueOf(500)
         } else HttpStatusCode.valueOf(200)
         println("---- hello laggy with status [$status]")
         return ResponseEntity(
             "hello world laggy with status [$status]",
             status,
+        )
+    }
+
+    @Timed("hello_world_sleepy")
+    @GetMapping("/sleepy")
+    fun helloWorldSleepy(): ResponseEntity<String> {
+        val sleep = Random.nextLong(0, 200)
+        Thread.sleep(Duration.ofMillis(sleep))
+        println("---- hello sleepy, slept for [$sleep] ms")
+        return ResponseEntity(
+            "hello world sleepy, slept for [$sleep] ms",
+            HttpStatusCode.valueOf(200),
         )
     }
 
