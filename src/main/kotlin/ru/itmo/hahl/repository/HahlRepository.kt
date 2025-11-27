@@ -3,6 +3,7 @@ package ru.itmo.hahl.repository
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.jdbc.core.namedparam.SqlParameterSource
 import org.springframework.stereotype.Repository
 import ru.itmo.hahl.dto.MyData
 
@@ -12,11 +13,14 @@ class HahlRepository(
 ) {
 
     private val select = """select * from storedata where id = :id"""
-    private val insert = """insert into storedata (id, value) values(:id, :value)"""
+    private val insert = """insert into storedata (id, data) values(:id, :data)"""
 
-    fun store(data: MyData) = template.update(
+    fun store(key: Int, myData: MyData) = template.update(
         insert,
-        BeanPropertySqlParameterSource(data)
+        mapOf(
+            "id" to key,
+            "data" to myData.result,
+        ).toMutableMap()
     )
 
     fun get(key: Int) = template

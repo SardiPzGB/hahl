@@ -9,7 +9,12 @@ class HahlService(
     private val repository: HahlRepository
 ) {
 
-    fun store(data: String) = repository.store(MyData(data))
+
+    fun store() {
+        for ( i: Int in 0.. 100) {
+            repository.store(i, MyData("data if $i"))
+        }
+    }
 
     fun getFromDb(key: Int) = repository.get(key)
 }

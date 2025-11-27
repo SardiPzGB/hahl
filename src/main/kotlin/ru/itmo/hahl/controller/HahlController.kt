@@ -64,11 +64,11 @@ class HahlController(
     }
 
     @Timed("store")
-    @PostMapping("/store")
-    fun store(@RequestBody body: HahlBody): ResponseEntity<String> {
-        val result = service.store(body.data)
+    @GetMapping("/store")
+    fun store(): ResponseEntity<String> {
+        service.store()
         return ResponseEntity(
-            "$result",
+            "stored 100",
             HttpStatusCode.valueOf(200),
         )
     }
