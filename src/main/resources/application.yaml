@@ -1,10 +1,17 @@
 spring:
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/hahl_database
+    user: hahl_user
+    password: hahl_password
+    locations: classpath:/db/migration
   application:
     name: hahl
   datasource:
     url: jdbc:postgresql://localhost:5432/
-    username: postgres
-    password: gfhjkm
+    username: hahl_user
+    password: hahl_password
+#    password: gfhjkm
     driver-class-name: org.postgresql.Driver
 
 management:

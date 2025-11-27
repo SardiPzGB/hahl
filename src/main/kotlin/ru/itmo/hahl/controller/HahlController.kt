@@ -53,12 +53,22 @@ class HahlController(
         )
     }
 
+    @Timed("db_no_cache")
+    @GetMapping("/nocache")
+    fun getNoCache(): ResponseEntity<String>  {
+        val num = Random.nextInt(1, 100)
+        return ResponseEntity(
+            service.getFromDb(num),
+            HttpStatusCode.valueOf(200),
+        )
+    }
+
     @Timed("store")
     @PostMapping("/store")
     fun store(@RequestBody body: HahlBody): ResponseEntity<String> {
         val result = service.store(body.data)
         return ResponseEntity(
-            result,
+            "$result",
             HttpStatusCode.valueOf(200),
         )
     }
