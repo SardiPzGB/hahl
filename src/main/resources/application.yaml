@@ -1,4 +1,10 @@
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: hahl_redis_password
+      user: hahl_user
   flyway:
     enabled: true
     url: jdbc:postgresql://localhost:5432/hahl_database
