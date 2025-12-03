@@ -63,17 +63,17 @@ class HahlController(
     @GetMapping("/cached")
     fun getCached(@RequestParam id: Int): ResponseEntity<String>  {
         val fromRedis: String? = service.getFromRedis(id)
-        val result = if (fromRedis == null) {
-            println("---- cache miss for [$id]!!")
-            val fromPostgres = service.getFromPostgres(id)
-            service.storeInRedis(id, fromPostgres)
-            fromPostgres
-        } else {
-            println("---- cache hit for [$id]!!")
-            fromRedis
+        if (fromRedis != null) {
+            return ResponseEntity(
+                fromRedis,
+                HttpStatusCode.valueOf(200),
+            )
         }
+
+        val fromPostgres = service.getFromPostgres(id)
+        service.storeInRedis(id, fromPostgres)
         return ResponseEntity(
-            result,
+            fromPostgres,
             HttpStatusCode.valueOf(200),
         )
     }
