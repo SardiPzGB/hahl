@@ -1,21 +1,25 @@
 package ru.itmo.hahl.repository
 
-import org.springframework.jdbc.core.RowCallbackHandler
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import ru.itmo.hahl.dto.MyData
+import javax.sql.DataSource
 
 @Repository
 class PostgresRepository(
-    private val template: NamedParameterJdbcTemplate
+    @Qualifier("master")
+    private val writeTemplate: NamedParameterJdbcTemplate,
+    @Qualifier("replica")
+    private val replicaTemplate: NamedParameterJdbcTemplate,
 ) {
 
     private val select = """select * from storedata where id = :id"""
     private val insert = """insert into storedata (id, data) values(:id, :data)"""
     private val clear = """delete from storedata"""
 
-    fun store(key: Int, myData: String) = template.update(
+    fun store(key: Int, myData: String) = writeTemplate.update(
         insert,
         mapOf(
             "id" to key,
@@ -23,11 +27,11 @@ class PostgresRepository(
         ).toMutableMap()
     )
 
-    fun get(key: Int) = template
+    fun get(key: Int) = replicaTemplate
         .queryForObject(select, MapSqlParameterSource(mapOf("id" to key)))
         { rs, _ -> MyData(rs.getString("data")) }
         ?.result ?: throw Exception("boom!")
 
-    fun clear() = template.update(clear, emptyMap<String, String>().toMutableMap())
+    fun clear() = writeTemplate.update(clear, emptyMap<String, String>().toMutableMap())
 
 }

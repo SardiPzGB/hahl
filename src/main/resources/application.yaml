@@ -14,11 +14,16 @@ spring:
   application:
     name: hahl
   datasource:
-    url: jdbc:postgresql://localhost:5432/hahl_database
-    username: hahl_user
-    password: hahl_password
-#    password: gfhjkm
-    driver-class-name: org.postgresql.Driver
+    primary:
+      url: jdbc:postgresql://localhost:6432/hahl_database
+      username: hahl_user
+      password: hahl_password
+      driver-class-name: org.postgresql.Driver
+    replica:
+      url: jdbc:postgresql://localhost:6433/hahl_database
+      username: hahl_user
+      password: hahl_password
+      driver-class-name: org.postgresql.Driver
 
 management:
   metrics:

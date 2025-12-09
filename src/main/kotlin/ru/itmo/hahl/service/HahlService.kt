@@ -1,7 +1,6 @@
 package ru.itmo.hahl.service
 
 import org.springframework.stereotype.Service
-import ru.itmo.hahl.dto.MyData
 import ru.itmo.hahl.repository.PostgresRepository
 import ru.itmo.hahl.repository.RedisRepository
 
