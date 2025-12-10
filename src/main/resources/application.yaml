@@ -7,22 +7,22 @@ spring:
       user: hahl_user
   flyway:
     enabled: true
-    url: jdbc:postgresql://localhost:5432/hahl_database
-    user: hahl_user
-    password: hahl_password
+    url: jdbc:postgresql://localhost:6432/hahldatabase
+    user: hahluser
+    password: hahlpassword
     locations: classpath:/db/migration
   application:
     name: hahl
   datasource:
     primary:
-      url: jdbc:postgresql://localhost:6432/hahl_database
-      username: hahl_user
-      password: hahl_password
+      jdbcUrl: jdbc:postgresql://localhost:6432/hahldatabase
+      username: hahluser
+      password: hahlpassword
       driver-class-name: org.postgresql.Driver
     replica:
-      url: jdbc:postgresql://localhost:6433/hahl_database
-      username: hahl_user
-      password: hahl_password
+      jdbcUrl: jdbc:postgresql://localhost:6433/hahldatabase
+      username: hahluser
+      password: hahlpassword
       driver-class-name: org.postgresql.Driver
 
 management:
