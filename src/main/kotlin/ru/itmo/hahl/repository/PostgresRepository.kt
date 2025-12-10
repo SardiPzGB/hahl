@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import ru.itmo.hahl.dto.MyData
-import javax.sql.DataSource
 
 @Repository
 class PostgresRepository(
@@ -27,7 +26,12 @@ class PostgresRepository(
         ).toMutableMap()
     )
 
-    fun get(key: Int) = replicaTemplate
+    fun getFromMaster(key: Int) = writeTemplate
+        .queryForObject(select, MapSqlParameterSource(mapOf("id" to key)))
+        { rs, _ -> MyData(rs.getString("data")) }
+        ?.result ?: throw Exception("boom!")
+
+    fun getFromReplica(key: Int) = replicaTemplate
         .queryForObject(select, MapSqlParameterSource(mapOf("id" to key)))
         { rs, _ -> MyData(rs.getString("data")) }
         ?.result ?: throw Exception("boom!")

@@ -15,7 +15,9 @@ class HahlService(
         postgresRepository.store(id, "data is $data")
     }
 
-    fun getFromPostgres(key: Int) = postgresRepository.get(key)
+    fun getFromMasterPostgres(key: Int) = postgresRepository.getFromMaster(key)
+
+    fun getFromReplicaPostgres(key: Int) = postgresRepository.getFromReplica(key)
 
     fun storeInRedis(key: Int, value: String) = redisRepository.storeValue("$key", value)
 

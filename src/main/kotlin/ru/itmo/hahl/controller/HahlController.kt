@@ -46,22 +46,41 @@ class HahlController(
         service.clearPostgres()
         return ResponseEntity(
             "cleared",
-                HttpStatusCode.valueOf(200)
+            HttpStatusCode.valueOf(200)
         )
     }
 
     @Timed("db_no_cache")
     @GetMapping("/nocached")
-    fun getNoCache(@RequestParam id: Int): ResponseEntity<String>  {
+    fun getNoCache(@RequestParam id: Int): ResponseEntity<String> {
         return ResponseEntity(
-            service.getFromPostgres(id),
+            service.getFromReplicaPostgres(id),
             HttpStatusCode.valueOf(200),
         )
     }
 
+    @Timed("db_no_cache")
+    @GetMapping("/percented")
+    fun getPercented(
+        @RequestParam percent: Int,
+        @RequestParam id: Int
+    ) = ResponseEntity(
+        if (Random.nextInt(0, 100) > percent) {
+            val found = service.getFromMasterPostgres(id)
+            println("--- reading from master, percent = [$percent], id = [$id], found = [$found]")
+            found
+        } else {
+            val found = service.getFromReplicaPostgres(id)
+            println("--- reading from replica, percent = [$percent], id = [$id], found = [$found]")
+            found
+        },
+        HttpStatusCode.valueOf(200),
+    )
+
+
     @Timed("db_cached")
     @GetMapping("/cached")
-    fun getCached(@RequestParam id: Int): ResponseEntity<String>  {
+    fun getCached(@RequestParam id: Int): ResponseEntity<String> {
         val fromRedis: String? = service.getFromRedis(id)
         if (fromRedis != null) {
             return ResponseEntity(
@@ -70,7 +89,7 @@ class HahlController(
             )
         }
 
-        val fromPostgres = service.getFromPostgres(id)
+        val fromPostgres = service.getFromReplicaPostgres(id)
         service.storeInRedis(id, fromPostgres)
         return ResponseEntity(
             fromPostgres,
