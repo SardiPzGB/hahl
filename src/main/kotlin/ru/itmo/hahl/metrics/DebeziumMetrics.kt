@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Component
+import ru.itmo.hahl.service.ChangeEventHandler.Companion.logger
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
@@ -72,6 +73,7 @@ class DebeziumMetrics(
     }
 
     fun incrementInsert(table: String) {
+        logger.info { "incrementing insert metric for table $table" }
         totalEventsCounter.increment()
         getInsertCounter(table).increment()
         registry.counter("debezium.events.operation", "operation", "insert").increment()

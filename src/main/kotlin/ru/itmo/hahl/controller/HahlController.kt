@@ -120,15 +120,19 @@ class HahlController(
 //        )
 //    }
 //
-//    @Timed("store")
-//    @GetMapping("/store")
-//    fun store(@RequestParam data: String): ResponseEntity<String> {
-//        service.storeInPostgres(count, data)
-//        count++
-//        return ResponseEntity(
-//            "stored $data with index $count",
-//            HttpStatusCode.valueOf(200),
-//        )
-//    }
+    @Timed("store")
+    @GetMapping("/store")
+    fun store(@RequestParam data: String): ResponseEntity<String> {
+        try {
+            service.storeInPostgres(count, data)
+        } catch (e: Exception) {
+            count++
+        }
+        count++
+        return ResponseEntity(
+            "stored $data with index $count",
+            HttpStatusCode.valueOf(200),
+        )
+    }
 
 }

@@ -10,6 +10,7 @@ import ru.itmo.hahl.metrics.DebeziumMetrics
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.TimeUnit
+import kotlin.math.log
 
 @Component
 class ChangeEventHandler(
@@ -36,11 +37,32 @@ class ChangeEventHandler(
             logger.debug { "Processing event of size: $eventSize bytes" }
 
             if (value != null) {
+                logger.info("--------------------------------------------------")
+                logger.info("get not null value [$value]")
+
+                logger.info("--------------------------------------------------")
                 val eventData = objectMapper.readTree(value)
-                val operation = eventData.get("op").asText()
-                val source = eventData.get("source")
+                logger.info("get not null eventData [$eventData]")
+
+                logger.info("--------------------------------------------------")
+                val payload = eventData.get("payload")
+                logger.info("get not null payload [$payload]")
+
+                logger.info("--------------------------------------------------")
+                val operation = payload?.get("op")?.asText() ?: "null operation"
+                logger.info("get not null operation [$operation]")
+
+                logger.info("--------------------------------------------------")
+                val source = payload.get("source")
+                logger.info("get not null source [$source]")
+
+                logger.info("--------------------------------------------------")
                 val table = source.get("table").asText()
-                val tsMs = source.get("ts_ms").asLong()
+                logger.info("get not null table [$table]")
+
+                logger.info("--------------------------------------------------")
+                val tsMs = payload?.get("ts_ms")?.asLong() ?: 0L
+                logger.info("get not null tsMs [$tsMs]")
 
                 // Вычисляем лаг репликации
                 val replicationLag = System.currentTimeMillis() - tsMs
@@ -56,19 +78,19 @@ class ChangeEventHandler(
                 when (operation) {
                     "c" -> {
                         metrics.incrementInsert(table)
-                        handleCreate(eventData, table)
+                        handleCreate(payload, table)
                     }
                     "u" -> {
                         metrics.incrementUpdate(table)
-                        handleUpdate(eventData, table)
+                        handleUpdate(payload, table)
                     }
                     "d" -> {
                         metrics.incrementDelete(table)
-                        handleDelete(eventData, table)
+                        handleDelete(payload, table)
                     }
                     "r" -> {
                         metrics.incrementRead(table)
-                        handleRead(eventData, table)
+                        handleRead(payload, table)
                     }
                     else -> {
                         logger.warn { "Unknown operation: $operation" }
@@ -100,22 +122,8 @@ class ChangeEventHandler(
 
     private fun handleCreate(eventData: JsonNode, table: String) {
         val after = eventData.get("after")
-        logger.info { "INSERT into $table: ${after.toPrettyString()}" }
-
-        // Бизнес-логика для создания
-        when (table) {
-            "users" -> {
-                val userId = after.get("id")?.asLong()
-                val email = after.get("email")?.asText()
-                // Отправить уведомление, обновить кэш и т.д.
-                logger.info { "New user created: ID=$userId, Email=$email" }
-            }
-            "orders" -> {
-                val orderId = after.get("id")?.asLong()
-                val amount = after.get("amount")?.asDouble()
-                logger.info { "New order created: ID=$orderId, Amount=$amount" }
-            }
-        }
+        println("----- got after [$after]")
+        logger.info { "handling create event, new data [${after.get("data").asText()}] stored}" }
     }
 
     private fun handleUpdate(eventData: JsonNode, table: String) {
@@ -124,31 +132,16 @@ class ChangeEventHandler(
         logger.info { "UPDATE in $table:" }
         logger.info { "Before: ${before.toPrettyString()}" }
         logger.info { "After: ${after.toPrettyString()}" }
-
-        // Бизнес-логика для обновления
-        when (table) {
-            "users" -> {
-                val userId = after.get("id")?.asLong()
-                logger.info { "User updated: ID=$userId" }
-            }
-        }
     }
 
     private fun handleDelete(eventData: JsonNode, table: String) {
         val before = eventData.get("before")
         logger.info { "DELETE from $table: ${before.toPrettyString()}" }
 
-        // Бизнес-логика для удаления
-        when (table) {
-            "users" -> {
-                val userId = before.get("id")?.asLong()
-                logger.info { "User deleted: ID=$userId" }
-            }
-        }
     }
 
     private fun handleRead(eventData: JsonNode, table: String) {
         val after = eventData.get("after")
-        logger.debug { "READ from $table: ${after.toPrettyString()}" }
+        logger.info { "READ from $table: ${after.toPrettyString()}" }
     }
 }
