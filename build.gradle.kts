@@ -18,19 +18,27 @@ repositories {
 
 dependencies {
 	implementation ("org.springframework.boot:spring-boot-starter-actuator")
-//	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 //	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.kafka:spring-kafka")
 
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-//	implementation("org.flywaydb:flyway-database-postgresql")
-//	implementation ("org.postgresql:postgresql")
+	implementation("org.flywaydb:flyway-database-postgresql")
+//	implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
+	implementation ("org.postgresql:postgresql")
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+
+
+	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+
+	implementation("io.debezium:debezium-api:2.3.0.Final")
+	implementation("io.debezium:debezium-embedded:2.3.0.Final")
+	implementation("io.debezium:debezium-connector-postgres:2.3.0.Final")
 
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

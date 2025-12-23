@@ -1,6 +1,19 @@
 spring:
   application:
     name: "hahl2025"
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/hahl_database
+    username: hahl_user
+    password: hahl_password
+    locations: classpath:/db/migration
+  #  application:
+  #    name: hahl
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hahl_database
+    username: hahl_user
+    password: hahl_password
+    driver-class-name: org.postgresql.Driver
   kafka:
     bootstrap-servers: 127.0.0.1:9092
 
@@ -32,25 +45,6 @@ app:
 #      port: 6379
 #      password: hahl_redis_password
 #      user: hahl_user
-#  flyway:
-#    enabled: true
-#    url: jdbc:postgresql://localhost:6432/hahldatabase
-#    user: hahluser
-#    password: hahlpassword
-#    locations: classpath:/db/migration
-#  application:
-#    name: hahl
-#  datasource:
-#    primary:
-#      jdbcUrl: jdbc:postgresql://localhost:6432/hahldatabase
-#      username: hahluser
-#      password: hahlpassword
-#      driver-class-name: org.postgresql.Driver
-#    replica:
-#      jdbcUrl: jdbc:postgresql://localhost:6433/hahldatabase
-#      username: hahluser
-#      password: hahlpassword
-#      driver-class-name: org.postgresql.Driver
 
 
 management:
