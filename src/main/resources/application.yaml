@@ -1,29 +1,57 @@
 spring:
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password: hahl_redis_password
-      user: hahl_user
-  flyway:
-    enabled: true
-    url: jdbc:postgresql://localhost:6432/hahldatabase
-    user: hahluser
-    password: hahlpassword
-    locations: classpath:/db/migration
   application:
-    name: hahl
-  datasource:
-    primary:
-      jdbcUrl: jdbc:postgresql://localhost:6432/hahldatabase
-      username: hahluser
-      password: hahlpassword
-      driver-class-name: org.postgresql.Driver
-    replica:
-      jdbcUrl: jdbc:postgresql://localhost:6433/hahldatabase
-      username: hahluser
-      password: hahlpassword
-      driver-class-name: org.postgresql.Driver
+    name: "hahl2025"
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+
+    consumer:
+      group-id: hahl2025-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+    listener:
+      type: single
+      auto-startup: false
+      missing-topics-fatal: false
+
+    producer:
+      properties:
+        # Обновлять метаданные каждые 10 секунд (по умолчанию 5 минут)
+        metadata.max.age.ms: 10000
+        # Отключить кэширование для отладки
+        max.block.ms: 5000
+
+app:
+  kafka:
+    topic: hahl-topic
+
+#  data:
+#    redis:
+#      host: localhost
+#      port: 6379
+#      password: hahl_redis_password
+#      user: hahl_user
+#  flyway:
+#    enabled: true
+#    url: jdbc:postgresql://localhost:6432/hahldatabase
+#    user: hahluser
+#    password: hahlpassword
+#    locations: classpath:/db/migration
+#  application:
+#    name: hahl
+#  datasource:
+#    primary:
+#      jdbcUrl: jdbc:postgresql://localhost:6432/hahldatabase
+#      username: hahluser
+#      password: hahlpassword
+#      driver-class-name: org.postgresql.Driver
+#    replica:
+#      jdbcUrl: jdbc:postgresql://localhost:6433/hahldatabase
+#      username: hahluser
+#      password: hahlpassword
+#      driver-class-name: org.postgresql.Driver
+
 
 management:
   metrics:
