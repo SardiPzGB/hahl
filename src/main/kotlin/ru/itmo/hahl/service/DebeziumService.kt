@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import mu.KLogging
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import ru.itmo.hahl.metrics.DebeziumMetrics
 import java.util.concurrent.ExecutorService
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
 @Service
+@ConditionalOnProperty(value = ["app.debezium.enabled"], havingValue = "true")
 class DebeziumService(
     private val debeziumEngine: DebeziumEngine<io.debezium.engine.ChangeEvent<String, String>>,
     private val debeziumExecutor: ExecutorService,

@@ -1,0 +1,52 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.layered  # ← Явно указываем имя вашего хорошего файла
+    image: hahl:layered
+    ports:
+      - "8080:8080"
+    environment:
+      # Напрямую задаем jdbcUrl для Hikari (это обходит любые проблемы биндинга Spring)
+      SPRING_DATASOURCE_HIKARI_JDBC_URL: jdbc:postgresql://db:5432/hahldatabase
+      SPRING_DATASOURCE_HIKARI_USERNAME: hahluser
+      SPRING_DATASOURCE_HIKARI_PASSWORD: hahlpassword  # ← ДОБАВИТЬ ЭТО
+      SPRING_DATASOURCE_USERNAME: hahluser
+      SPRING_DATASOURCE_PASSWORD: hahlpassword
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+
+      # Настройки Flyway (чтобы он тоже шел в 'db', а не в 'localhost')
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_URL: jdbc:postgresql://db:5432/hahldatabase
+      SPRING_FLYWAY_USER: hahluser
+      SPRING_FLYWAY_PASSWORD: hahlpassword
+      SPRING_FLYWAY_LOCATIONS: classpath:/db/migration
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - unicornmart-net
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: hahldatabase
+      POSTGRES_USER: hahluser
+      POSTGRES_PASSWORD: hahlpassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # Исправлено: используем hahluser, а не app
+      test: ["CMD-SHELL", "pg_isready -U hahluser -d hahldatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - unicornmart-net
+
+networks:
+  unicornmart-net:
+    driver: bridge
+
+volumes:
+  pgdata:

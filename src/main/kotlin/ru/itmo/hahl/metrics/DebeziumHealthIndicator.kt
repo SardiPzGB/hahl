@@ -2,10 +2,12 @@ package ru.itmo.hahl.metrics
 
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthIndicator
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import ru.itmo.hahl.service.DebeziumService
 
 @Component
+@ConditionalOnProperty(value = ["app.debezium.enabled"], havingValue = "true")
 class DebeziumHealthIndicator(
     private val debeziumService: DebeziumService
 ) : HealthIndicator {

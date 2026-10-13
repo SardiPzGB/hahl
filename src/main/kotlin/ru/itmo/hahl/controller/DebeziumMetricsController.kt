@@ -1,6 +1,7 @@
 package ru.itmo.hahl.controller
 
 import io.micrometer.core.instrument.MeterRegistry
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit
 
 @RestController
 @RequestMapping("/api/debezium")
+@ConditionalOnProperty(value = ["app.debezium.enabled"], havingValue = "true")
 class DebeziumMetricsController(
     private val registry: MeterRegistry,
     private val metrics: DebeziumMetrics,

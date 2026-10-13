@@ -1,24 +1,20 @@
 spring:
   application:
-    name: "hahl2025"
+    name: "hahl2026"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/hahldatabase
+    username: hahluser
+    password: hahlpassword
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+      max-lifetime: 1800000
   flyway:
     enabled: true
     url: jdbc:postgresql://localhost:5432/hahldatabase
     user: hahluser
     password: hahlpassword
-    locations: classpath:/db/migration
-  #  application:
-  #    name: hahl
-  datasource:
-    url: jdbc:postgresql://localhost:5432/hahldatabase
-#    driver-class-name: org.postgresql.Driver
-    hikari:
-      username: hahluser
-      password: hahlpassword
-      maximum-pool-size: 10
-      jdbc-url: jdbc:postgresql://localhost:5432/hahldatabase
-      connection-timeout: 30000 # 30 секунд
-      max-lifetime: 1800000
 
 
   kafka:
@@ -44,8 +40,10 @@ spring:
 
 app:
   kafka:
+    enabled: false
     topic: hahl-topic
   debezium:
+    enabled: false
     table: public.storedata
 management:
   metrics:

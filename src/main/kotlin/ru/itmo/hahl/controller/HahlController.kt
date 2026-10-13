@@ -1,6 +1,7 @@
 package ru.itmo.hahl.controller
 
 import io.micrometer.core.annotation.Timed
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -15,7 +16,7 @@ import kotlin.random.Random
 @RequestMapping("api/v1/hahl")
 class HahlController(
     private val service: HahlService,
-    private val producer: KafkaMessageProducer
+//    private val producer: KafkaMessageProducer
 ) {
 
     private var count: Int = 0
@@ -23,7 +24,7 @@ class HahlController(
     @Timed("hello_world")
     @GetMapping("/hello")
     fun helloWorld(): ResponseEntity<String> {
-        println("---- hello")
+        println("---- hello again")
         return ResponseEntity(
             "hello world",
             HttpStatusCode.valueOf(200),
@@ -57,7 +58,7 @@ class HahlController(
     @Timed("produce")
     @GetMapping("/produce")
     fun produce(@RequestParam message: String): ResponseEntity<String> {
-        producer.sendMessage(message)
+//        producer.sendMessage(message)
         return ResponseEntity(
             "sent message",
             HttpStatusCode.valueOf(200),

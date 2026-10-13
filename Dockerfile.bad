@@ -1,0 +1,7 @@
+FROM gradle:8.7-jdk21
+WORKDIR /app
+COPY . .
+RUN gradle bootJar --no-daemon
+
+EXPOSE 8080
+ENTRYPOINT java -jar build/libs/*.jar

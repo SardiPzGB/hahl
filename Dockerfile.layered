@@ -1,0 +1,41 @@
+# ===== Stage 1: сборка JAR =====
+FROM gradle:8.7-jdk21 AS builder
+WORKDIR /workspace
+
+# 1. Сначала только файлы сборки — кэшируем зависимости
+COPY build.gradle.kts settings.gradle.kts ./
+RUN gradle dependencies --no-daemon || true
+
+# 2. Теперь исходники
+COPY src ./src
+RUN gradle bootJar --no-daemon
+
+# 3. Раскладываем Spring Boot JAR на слои
+RUN java -Djarmode=layertools -jar build/libs/*.jar extract --destination extracted
+
+# ===== Stage 2: runtime =====
+FROM eclipse-temurin:21-jre AS runtime
+WORKDIR /app
+
+# Устанавливаем wget для healthcheck
+RUN apt-get update && apt-get install -y --no-install-recommends wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# 4. Копируем слои в порядке "от редко меняющихся к часто меняющимся"
+COPY --from=builder /workspace/extracted/dependencies/ ./
+COPY --from=builder /workspace/extracted/spring-boot-loader/ ./
+COPY --from=builder /workspace/extracted/snapshot-dependencies/ ./
+COPY --from=builder /workspace/extracted/application/ ./
+
+# 5. Непривилегированный пользователь
+RUN addgroup --system app && adduser --system --ingroup app app
+USER app
+
+EXPOSE 8080
+
+# 6. Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+  CMD wget -qO- http://localhost:8080/actuator/health | grep -q '"status":"UP"' || exit 1
+
+# 7. Exec-форма для graceful shutdown (Spring Boot 3.2+)
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]

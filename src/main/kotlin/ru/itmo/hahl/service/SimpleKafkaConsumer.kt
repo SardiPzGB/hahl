@@ -4,6 +4,7 @@ package ru.itmo.hahl.service
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.support.KafkaHeaders
 import org.springframework.messaging.handler.annotation.Header
@@ -11,6 +12,8 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnProperty(value = ["app.kafka.enabled"], havingValue = "true")
+
 class SimpleKafkaConsumer {
     private val logger = LoggerFactory.getLogger(SimpleKafkaConsumer::class.java)
 

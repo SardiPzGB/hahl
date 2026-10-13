@@ -21,10 +21,10 @@ class DebeziumConfig {
     @Value("\${spring.datasource.url}")
     private lateinit var databaseUrl: String
 
-    @Value("\${spring.datasource.hikari.username}")
+    @Value("\${spring.datasource.username}")
     private lateinit var username: String
 
-    @Value("\${spring.datasource.hikari.password}")
+    @Value("\${spring.datasource.password}")
     private lateinit var password: String
 
     @Value("\${app.debezium.table}")
